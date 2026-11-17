@@ -1,78 +1,18 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Планировщик баллов</title>
-<style>
-  /* ... (стили можно оставить те же, они не ломают скрипт) ... */
-  body { background: #f8fafc; font-family: sans-serif; padding: 10px; }
-  #error-box { display:none; background:red; color:white; padding:15px; font-size:14px; position:fixed; top:0; left:0; right:0; z-index:9999; white-space:pre-wrap; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест 2</title>
 </head>
-<body>
-
-<div id="error-box"></div>
-
-<header style="background:#4f46e5; color:white; padding:12px; font-weight:bold; margin:-10px -10px 10px -10px;">
-  <h1 style="font-size:17px; margin:0;">Планировщик баллов</h1>
-</header>
-
-<nav style="display:flex; gap:5px; margin-bottom:10px;">
-  <button onclick="showTab('plan')" style="background:#4f46e5; color:white; padding:10px; border:none; border-radius:5px;">План</button>
-  <button onclick="showTab('settings')" style="background:#ccc; color:black; padding:10px; border:none; border-radius:5px;">Настройки</button>
-</nav>
-
-<div id="tab-plan" class="tab-content">
-  <p><b>Период и итоги</b></p>
-  <div id="periodInfo">Загрузка...</div>
-</div>
-
-<div id="tab-settings" class="tab-content" style="display:none;">
-  <p><b>Настройки</b></p>
-  <div id="musiciansList">Загрузка...</div>
-</div>
-
-<script>
-// Ловушка для ошибок
-window.onerror = function(msg, url, line) {
-  var box = document.getElementById('error-box');
-  if(box) {
-    box.style.display = 'block';
-    box.innerText = 'ОШИБКА JS: ' + msg + ' (строка ' + line + ')';
-  }
-  return false;
-};
-
-function showTab(name) {
-  document.querySelectorAll('.tab-content').forEach(function(el) { el.style.display = 'none'; });
-  document.getElementById('tab-' + name).style.display = 'block';
-}
-
-try {
-  // --- НАЧАЛО ЛОГИКИ ---
-  var state = {
-    musicians: [
-      {id:'m1', name:'Музыкант 1'}, {id:'m2', name:'Музыкант 2'},
-      {id:'m3', name:'Музыкант 3'}, {id:'m4', name:'Музыкант 4'},
-      {id:'m5', name:'Музыкант 5'}, {id:'m6', name:'Музыкант 6'},
-      {id:'m7', name:'Музыкант 7'}, {id:'m8', name:'Музыкант 8'}
-    ]
-  };
-
-  document.getElementById('periodInfo').innerHTML = "Период: 2026-01-01 — 2026-01-15";
+<body style="background: #e0f2fe; padding: 20px; font-family: sans-serif;">
+  <h1 style="color: #0369a1;">Тест 2: Кнопки</h1>
   
-  var html = "";
-  for(var i=0; i<state.musicians.length; i++) {
-    html += "<div style='padding:5px; border-bottom:1px solid #ccc;'>" + state.musicians[i].name + "</div>";
-  }
-  document.getElementById('musiciansList').innerHTML = html;
-
-  // --- КОНЕЦ ЛОГИКИ ---
-} catch (e) {
-  document.getElementById('error-box').style.display = 'block';
-  document.getElementById('error-box').innerText = "ОШИБКА: " + e.message;
-}
-</script>
+  <button onclick="document.getElementById('result').innerText = 'Кнопка работает!'" 
+          style="padding: 15px; font-size: 18px; background: #0284c7; color: white; border: none; border-radius: 10px; width: 100%;">
+    Нажми меня
+  </button>
+  
+  <h2 id="result" style="color: #166534; margin-top: 20px;">Ожидание нажатия...</h2>
 </body>
 </html>
