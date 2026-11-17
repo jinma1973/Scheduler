@@ -34,11 +34,18 @@ jobs:
           npx cap add android || true
           npx cap sync android
 
+      - name: Fix Maven Repository 429 Error
+        run: |
+          cd android
+          # Заменяем mavenCentral() на зеркала, которые не банят
+          sed -i 's/mavenCentral()/maven { url "https:\/\/maven.google.com" }; maven { url "https:\/\/jitpack.io" }/g' build.gradle
+          sed -i 's/mavenCentral()/maven { url "https:\/\/maven.google.com" }; maven { url "https:\/\/jitpack.io" }/g' settings.gradle || true
+
       - name: Build Gradle
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
