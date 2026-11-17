@@ -79,6 +79,16 @@
 
 <div class="toast" id="toast"></div>
 
+<script>
+  window.onerror = function(message, source, lineno, colno, error) {
+    document.body.innerHTML = '<div style="color:red; padding:20px; font-family:monospace; font-size:16px; background:#fff; height:100vh; z-index:9999; position:absolute; top:0; left:0; right:0;">' +
+      '<h3>Ошибка в коде:</h3>' +
+      '<p><b>' + message + '</b></p>' +
+      '<p>Файл: ' + source + '</p>' +
+      '<p>Строка: ' + lineno + ', Символ: ' + colno + '</p>' +
+      '</div>';
+  };
+</script>
 <script src="app.js"></script>
 </body>
 </html>
