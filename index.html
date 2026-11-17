@@ -32,8 +32,9 @@
   input,select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;
     font-size:14px;background:#fff;color:var(--fg);width:100%}
   label{display:flex;align-items:center;gap:6px;font-size:14px}
-  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap; margin-bottom:6px;}
   .muted{color:var(--muted);font-size:13px}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 </style>
 </head>
 <body>
@@ -51,38 +52,142 @@
   <section class="tab active" id="tab-plan">
     <div class="card">
       <h2>Период и итоги</h2>
-      <div id="periodInfo" class="muted">Период будет здесь.</div>
+      <div id="periodInfo" class="muted" style="margin-bottom:8px"></div>
     </div>
   </section>
 
   <section class="tab" id="tab-settings">
     <div class="card">
-      <h2>Настройки</h2>
-      <p>Здесь будут музыканты и накопленные баллы.</p>
-      <button class="btn" onclick="alert('Кнопка в настройках работает!')">Проверить</button>
+      <h2>Период</h2>
+      <div class="grid-2">
+        <label>Начало<input type="date" id="periodStart"></label>
+        <label>Конец<input type="date" id="periodEnd"></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Музыканты</h2>
+      <div id="musiciansList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Накопленные баллы</h2>
+      <div id="accumList"></div>
     </div>
   </section>
 </main>
 
 <script>
+  // --- ДАННЫЕ ---
+  var STORAGE_KEY = 'planner_state_v1';
+  
+  function defaultState() {
+    var musicians = [];
+    for(var i=1; i<=8; i++) {
+      musicians.push({
+        id: 'm' + i,
+        name: 'Музыкант ' + i,
+        isConcertmaster: i <= 3
+      });
+    }
+    return {
+      musicians: musicians,
+      accumulated: {},
+      period: { start: '2026-01-01', end: '2026-01-15' }
+    };
+  }
+
+  var state;
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return defaultState();
+      return JSON.parse(raw);
+    } catch(e) {
+      return defaultState();
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch(e) {}
+  }
+
+  // --- ОТРИСОВКА ---
+  function render() {
+    // Период
+    document.getElementById('periodStart').value = state.period.start;
+    document.getElementById('periodEnd').value = state.period.end;
+    
+    var info = "Период: " + state.period.start + " — " + state.period.end;
+    document.getElementById('periodInfo').innerHTML = info;
+
+    // Музыканты
+    var mHtml = '';
+    for(var i=0; i<state.musicians.length; i++) {
+      var m = state.musicians[i];
+      mHtml += '<div class="row">';
+      mHtml += '<span style="flex:1">' + m.name + '</span>';
+      mHtml += '<label><input type="checkbox" ' + (m.isConcertmaster ? 'checked' : '') + ' onchange="toggleCM(\'' + m.id + '\', this.checked)"> Концертмейстер</label>';
+      mHtml += '</div>';
+    }
+    document.getElementById('musiciansList').innerHTML = mHtml;
+
+    // Накопленные баллы
+    var aHtml = '';
+    for(var j=0; j<state.musicians.length; j++) {
+      var m2 = state.musicians[j];
+      var val = state.accumulated[m2.id] || 0;
+      aHtml += '<div class="row">';
+      aHtml += '<span style="flex:1">' + m2.name + '</span>';
+      aHtml += '<input type="number" step="0.01" style="width:100px" value="' + val.toFixed(2) + '" onchange="setAccum(\'' + m2.id + '\', this.value)">';
+      aHtml += '</div>';
+    }
+    document.getElementById('accumList').innerHTML = aHtml;
+  }
+
+  // --- СОБЫТИЯ ---
+  window.toggleCM = function(id, isChecked) {
+    for(var i=0; i<state.musicians.length; i++) {
+      if(state.musicians[i].id === id) {
+        state.musicians[i].isConcertmaster = isChecked;
+      }
+    }
+    saveState();
+  };
+
+  window.setAccum = function(id, val) {
+    state.accumulated[id] = parseFloat(val) || 0;
+    saveState();
+  };
+
   document.getElementById('nav').addEventListener('click', function(e) {
     var btn = e.target.closest('button[data-tab]');
     if(!btn) return;
     
-    // Красим кнопки
     var btns = document.querySelectorAll('#nav button');
-    for(var i=0; i<btns.length; i++) {
-      btns[i].classList.remove('active');
-    }
+    for(var i=0; i<btns.length; i++) btns[i].classList.remove('active');
     btn.classList.add('active');
 
-    // Переключаем экраны
     var tabs = document.querySelectorAll('.tab');
-    for(var j=0; j<tabs.length; j++) {
-      tabs[j].classList.remove('active');
-    }
+    for(var j=0; j<tabs.length; j++) tabs[j].classList.remove('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
   });
+
+  document.getElementById('periodStart').addEventListener('change', function(e) {
+    state.period.start = e.target.value;
+    saveState(); render();
+  });
+  document.getElementById('periodEnd').addEventListener('change', function(e) {
+    state.period.end = e.target.value;
+    saveState(); render();
+  });
+
+  // --- СТАРТ ---
+  state = loadState();
+  render();
 </script>
 </body>
 </html>
