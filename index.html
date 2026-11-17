@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>Планировщик баллов</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Планировщик баллов</h1>
+</header>
+
+<nav id="nav">
+  <button data-tab="plan" class="active">План</button>
+  <button data-tab="programs">Программы</button>
+  <button data-tab="settings">Настройки</button>
+</nav>
+
+<main>
+  <!-- ================= ПЛАН ================= -->
+  <section class="tab active" id="tab-plan">
+    <div class="card">
+      <h2>Период и итоги</h2>
+      <div id="periodInfo" class="muted" style="margin-bottom:8px"></div>
+      <div class="table-wrap">
+        <table id="planTable"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ПРОГРАММЫ ================= -->
+  <section class="tab" id="tab-programs">
+    <div class="card">
+      <h2>Программы</h2>
+      <div id="programsList"></div>
+      <div style="margin-top:8px">
+        <button id="addProgramBtn">+ Программа</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= НАСТРОЙКИ ================= -->
+  <section class="tab" id="tab-settings">
+    <div class="card">
+      <h2>Период планирования</h2>
+      <div class="grid-2">
+        <label>Начало<input type="date" id="periodStart"></label>
+        <label>Конец<input type="date" id="periodEnd"></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Музыканты</h2>
+      <div id="musiciansList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Накопленные баллы</h2>
+      <div id="accumList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Статусы по дням</h2>
+      <p class="muted">По умолчанию ОК. Нажмите на день, чтобы сменить статус (ОК → больничный → отпуск → ОК).</p>
+      <div id="statusesEditor"></div>
+    </div>
+
+    <div class="card">
+      <h2>Данные</h2>
+      <div class="row">
+        <button class="ghost small" id="resetBtn">Сбросить всё</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
